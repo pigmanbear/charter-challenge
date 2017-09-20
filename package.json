@@ -1,0 +1,28 @@
+{
+  "name": "charter-challenge",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "apollo-client": "^1.9.2",
+    "graphql-anywhere": "^3.1.0",
+    "graphql-tag": "^2.4.2",
+    "prop-types": "^15.5.10",
+    "react": "^15.6.1",
+    "react-apollo": "^1.4.15",
+    "react-dom": "^15.6.1",
+    "react-scripts": "1.0.13",
+    "recompose": "^0.25.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "apollo-test-utils": "^0.3.2",
+    "eslint": "^4.7.1",
+    "graphql": "^0.11.3",
+    "graphql-tools": "^1.2.2"
+  }
+}
