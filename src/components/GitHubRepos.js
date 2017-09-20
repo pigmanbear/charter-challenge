@@ -5,6 +5,7 @@ import { branch, renderComponent } from 'recompose';
 import Loading from './Loading';
 import RepoList from './RepoList';
 
+// https://developer.github.com/v4/
 const GET_GITHUB_REPOS = gql`
   query GetGitHubRepos {
     user(login: "gaearon") {

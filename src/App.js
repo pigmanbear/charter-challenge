@@ -11,7 +11,8 @@ const networkInterface = createNetworkInterface({
   uri: 'https://api.github.com/graphql',
   opts: {
     headers: {
-      "Authorization": "Bearer fbbf7bd453c7e3fad43595b4ee697b5327e0e53c"
+      // https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
+      "Authorization": "Bearer YOUR_GITHUB_PERSONAL_ACCESS_TOKEN"
     }
   }
 });
