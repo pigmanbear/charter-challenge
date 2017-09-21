@@ -7,12 +7,13 @@ import GitHubRepos from './components/GitHubRepos';
 import logo from './logo.svg';
 import './App.css';
 
+
 const networkInterface = createNetworkInterface({
   uri: 'https://api.github.com/graphql',
   opts: {
     headers: {
       // https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
-      "Authorization": "Bearer YOUR_GITHUB_PERSONAL_ACCESS_TOKEN"
+      "Authorization": `Bearer ${process.env.REACT_APP_TOKEN}`
     }
   }
 });

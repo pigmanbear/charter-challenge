@@ -1,9 +1,9 @@
-import _ from 'lodash';
-import { gql, graphql, compose } from 'react-apollo';
+import { path, compose} from 'ramda'
+import { gql, graphql } from 'react-apollo';
 import { branch, renderComponent } from 'recompose';
-
 import Loading from './Loading';
 import RepoList from './RepoList';
+
 
 // https://developer.github.com/v4/
 const GET_GITHUB_REPOS = gql`
@@ -19,15 +19,16 @@ const GET_GITHUB_REPOS = gql`
   }
 `;
 
+
 export default compose(
   graphql(GET_GITHUB_REPOS, {
-    props: ({ data: { loading, user } }) => ({
+    props: ({ data: { loading, user } }) =>  ({
       loading,
-      repos: _.property('repositories.nodes')(user),
-      user: _.property('login')(user)
-    })
+      repos: path(['repositories','nodes'])(user),
+      user:  path(['login'])(user)
+    }) 
   }),
-  branch(
+  branch (
     ({ loading }) => loading,
     renderComponent(Loading)
   )
