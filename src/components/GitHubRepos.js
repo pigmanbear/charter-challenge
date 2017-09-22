@@ -1,14 +1,16 @@
-import { path, compose} from 'ramda'
+import { path, compose, tap} from 'ramda'
 import { gql, graphql } from 'react-apollo';
 import { branch, renderComponent } from 'recompose';
 import Loading from './Loading';
 import RepoList from './RepoList';
+import Header from './Header'
+
 
 
 // https://developer.github.com/v4/
 const GET_GITHUB_REPOS = gql`
-  query GetGitHubRepos {
-    user(login: "gaearon") {
+  query GetGitHubRepos($login: String!) {
+    user(login: $login) {
       login
       repositories(first: 25) {
         nodes {
@@ -21,11 +23,16 @@ const GET_GITHUB_REPOS = gql`
 
 
 export default compose(
+  Header,
   graphql(GET_GITHUB_REPOS, {
-    props: ({ data: { loading, user } }) =>  ({
+    options: {
+      variables: { login: "gaearon" }
+    },
+    props: ({ data: { loading, user, variables } }) =>  ({
       loading,
       repos: path(['repositories','nodes'])(user),
-      user:  path(['login'])(user)
+      user:  path(['login'])(user),
+      variables: variables
     }) 
   }),
   branch (
