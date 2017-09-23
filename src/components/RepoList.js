@@ -18,7 +18,7 @@ import moment from 'moment'
 //Styling Layout
 //TODO: Presentational Grid (Table)
 
-const topLevel = ['name', 'createdAt', 'description', 'isFork', 'url']
+const topLevel = ['name', 'createdAt', 'description', 'isFork', 'url', 'pushedAt']
 const nested = ['primaryLanguage', 'stargazers', 'forks', 'owner']
 const allFields = pick(topLevel.concat(nested))
 const topFields = pick(topLevel)
@@ -33,6 +33,8 @@ const repoData = map(compose(x => Object.assign(topFields(x), {
   forks: forks(x),
   owner: owner(x)
 }), allFields))
+
+//TODO: Sort by various fields, scaffold in file, get working, then refactor
 
 const RepoList = ({repos}) => {
   console.log(repoData(repos))
@@ -50,7 +52,8 @@ const RepoList = ({repos}) => {
               <Item.Meta
                 style={{
                 fontWeight: 100,
-                marginTop: '10px'
+                marginTop: '10px',
+                color: 'hsl(221, 61%, 80%)'
               }}>
                 Created: {moment(repo.createdAt).format('MMM Do, YYYY')}
               </Item.Meta>
@@ -63,18 +66,19 @@ const RepoList = ({repos}) => {
                 <p>{emojify(repo.description)}</p>
                 <Statistic size='mini' floated='right'>
                 <Statistic.Value>
-                  <Icon name='star'/> {repo.starGazers}</Statistic.Value>
+                  <Icon name='star' color='yellow'/> {repo.starGazers}</Statistic.Value>
                 <Statistic.Label>stars</Statistic.Label>
               </Statistic>
               <Statistic size='mini' floated='right'>
                 <Statistic.Value>
-                  <Icon name='fork'/> {repo.forks}</Statistic.Value>
+                  <Icon name='fork' color='grey'/> {repo.forks}</Statistic.Value>
                 <Statistic.Label>forks</Statistic.Label>
               </Statistic>
 
               </Item.Description>
               <Item.Extra>
                 <Label icon='code' content={repo.language}/>
+                <Label icon='upload' content={`Updated:  ${moment(repo.pushedAt).fromNow()}`}/>
 
               </Item.Extra>
 

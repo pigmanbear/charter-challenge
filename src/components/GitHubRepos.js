@@ -27,6 +27,7 @@ const GET_GITHUB_REPOS = gql`
           description
           isFork
           url
+          pushedAt
           primaryLanguage {
             name
           }
