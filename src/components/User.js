@@ -4,13 +4,14 @@ import PropTypes from 'prop-types'
 const User = ({ user }) => (
       <div>
       <p>
-        <b>User:</b> {user}
+        <b>User:</b> {user.login}
       </p>
+      <b>Total Repository Count: </b> {user.repoCount}
     </div>
 )
 
 User.propTypes = {
-  user: PropTypes.string.isRequired
+  user: PropTypes.object.isRequired
 };
 
 export default User;

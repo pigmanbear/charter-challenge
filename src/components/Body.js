@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {List, Segment, Grid, Button, Input} from 'semantic-ui-react'
+import {List, Segment, Grid, Button, Input, Container} from 'semantic-ui-react'
 import RepoList from './RepoList'
 import User from './User'
 import {withHandlers, withState } from 'recompose'
@@ -23,7 +23,7 @@ const enhance = compose(
                 }),
 }))
 
-const Filter = ({data, onChange}) => (<Input icon='filter' placeholder='Filter Repos ...' onChange={onChange} value={data} style={{paddingLeft: '4em'}}/>)
+const Filter = ({data, onChange}) => (<Input icon='filter' placeholder='Filter Repos ...' onChange={onChange} value={data} />)
 const Body = enhance(({user, repos, data, filterResults}) => {
    data.repos = repos
 
@@ -31,9 +31,10 @@ const Body = enhance(({user, repos, data, filterResults}) => {
         <Segment style={{
             padding: '8em 0em'
         }} vertical>
+        <Container>
         <Filter onChange={filterResults} data={ data.searchString } />
 
-            <Grid container stackable verticalAlign='middle' celled>
+            <Grid container stackable verticalAlign='middle' style={{ marginTop: '1em'}}>
                 <Grid.Row>
                     <Grid.Column width={8}>
                         <User user={user}/>
@@ -46,13 +47,14 @@ const Body = enhance(({user, repos, data, filterResults}) => {
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
+            </Container>
         </Segment>
 
     )
 });
 
 Body.propTypes = {
-    user: PropTypes.string.isRequired,
+    user: PropTypes.object.isRequired,
     repos: PropTypes.array.isRequired
 };
 

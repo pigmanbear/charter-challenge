@@ -13,13 +13,40 @@ const GET_GITHUB_REPOS = gql`
     user(login: $login) {
       login
       repositories(first: 25) {
-        nodes {
-          name
+        totalCount
+        pageInfo{
+          hasNextPage
+          hasPreviousPage
+          startCursor
+          endCursor
         }
+        nodes {
+          id
+          name
+          createdAt
+          description
+          isFork
+          url
+          primaryLanguage {
+            name
+          }
+          owner {
+            login
+          }
+          watchers(first:0){
+            totalCount
+          }
+          stargazers(first:0) {
+            totalCount
+          }
+          forks(first:0){
+            totalCount
+          }
+        }
+  
       }
     }
-  }
-`;
+  }`
 
 
 export default compose(
@@ -30,8 +57,8 @@ export default compose(
     },
     props: ({ data: { loading, user, variables } }) =>  ({
       loading,
-      repos: path(['repositories','nodes'])(user),
-      user:  path(['login'])(user),
+      repos: path(['repositories','nodes'],user),
+      user:  Object.assign({}, {login: path(['login'],user), repoCount: path(['repositories', 'totalCount'], user)}),
       variables: variables
     }) 
   }),
