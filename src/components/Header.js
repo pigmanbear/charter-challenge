@@ -7,7 +7,7 @@ const HeaderComponent = (Component) => props => (
         inverted
         textAlign='center'
         style={{
-        minHeight: 400,
+        minHeight: 250,
         padding: '1em 0em'
     }}
         vertical>
@@ -21,7 +21,7 @@ const HeaderComponent = (Component) => props => (
                 fontSize: '3em',
                 fontWeight: 'normal',
                 marginBottom: 0,
-                marginTop: '2em',
+                marginTop: '1em',
                 paddingLeft: '1em'
             }}/>
             <Header
