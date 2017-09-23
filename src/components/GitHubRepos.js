@@ -2,7 +2,7 @@ import { path, compose, tap} from 'ramda'
 import { gql, graphql } from 'react-apollo';
 import { branch, renderComponent } from 'recompose';
 import Loading from './Loading';
-import RepoList from './RepoList';
+import Body from './Body';
 import Header from './Header'
 
 
@@ -39,4 +39,4 @@ export default compose(
     ({ loading }) => loading,
     renderComponent(Loading)
   )
-)(RepoList);
+)(Body);
