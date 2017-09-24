@@ -9,7 +9,7 @@ import {asyncReactor} from 'async-reactor';
 
 const simpleClient = new GraphQLClient('https://api.github.com/graphql', {
   headers: {
-    "Authorization": "Bearer 0fa55d7884656b76089591ae525d83a6a57c703d"
+    "Authorization": `Bearer ${process.env.REACT_APP_TOKEN}`
   }
 })
 const query = `{
@@ -25,8 +25,8 @@ const query = `{
 }`
 
 // http://dev.apollodata.com/react/initialization.html#fragment-matcher Creating
-// Async Function to Automatically Retrieve Schema As Per docs, in build process
-// would make more sense for production
+// Async Function to Automatically Retrieve Schema As Per docs, in build
+// process would make more sense for production
 
 async function creatApolloClient() {
   let schema = await simpleClient
