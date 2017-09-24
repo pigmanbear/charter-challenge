@@ -54,27 +54,29 @@ const GET_GITHUB_REPOS = gql`
 
 export default compose(
   Header,
-  withProps(props => ({...props,login: 'gaearon'})),
+  withProps(props => ({ login: 'gaearon'})),
   graphql(GET_GITHUB_REPOS, {
     options: props => {
-      console.log('Props', props)
       return ({
-      variables: { login: tap(console.log,props.login) }
+      variables: { login: props.login }
     })},
-    props: ({ data: { loading, user, variables,login } }) =>  ({
+    props: ({ data: { loading, user, variables, login, refetch } }) =>  {
+      return ({
       loading,
       repos: path(['repositories','nodes'],user),
       user:  Object.assign({}, {login: path(['login'],user), repoCount: path(['repositories', 'totalCount'], user)}),
-      variables: variables
-    }) 
+      variables: variables,
+      login: login,
+      refetch: refetch
+    }) }
   }),
+  branch (
+    (props) => isNil(props),
+    renderComponent(NotFound)
+  ),
   branch (
     ({ loading }) => loading,
     renderComponent(Loading)
-  ),
-  branch (
-    ({user}) => isNil(user.login),
-    renderComponent(NotFound),
   )
 )(Body);
 
@@ -84,7 +86,6 @@ export default compose(
 
 // query FindUser($login: String!){
 //   search(query:$login, type:USER, first:1){
-//     userCount
 //     edges {
 //       node{
 //       ... on User {
