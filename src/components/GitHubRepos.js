@@ -1,10 +1,10 @@
 import { path, compose, tap, isNil} from 'ramda'
-import { gql, graphql } from 'react-apollo';
+import { gql, graphql } from 'react-apollo'
 import { branch, renderComponent, withProps } from 'recompose';
-import Loading from './Loading';
-import Body from './Body';
+import Loading from './Loading'
 import Header from './Header'
 import NotFound from './NotFound'
+import RepoList from './RepoList'
 
 //TODO: Review Fragments, gql in another file? Cleanup 'Not Found' Branch Search Query for Name, Possible Pagination for Repos, Watchers, Stargazers etc
 //TODO: Cleanup with props (considering different methods for searching for user, return first one)
@@ -53,12 +53,10 @@ const GET_GITHUB_REPOS = gql`
 
 
 export default compose(
-  Header,
-  withProps(props => ({ login: 'gaearon'})),
   graphql(GET_GITHUB_REPOS, {
     options: props => {
       return ({
-      variables: { login: props.login }
+      variables: { login: props.login || 'gaearon'}
     })},
     props: ({ data: { loading, user, variables, login, refetch } }) =>  {
       return ({
@@ -71,61 +69,13 @@ export default compose(
     }) }
   }),
   branch (
-    (props) => isNil(props),
-    renderComponent(NotFound)
-  ),
-  branch (
     ({ loading }) => loading,
     renderComponent(Loading)
-  )
-)(Body);
+  ),
+  branch (
+    ({ user }) => isNil(user.login),
+    renderComponent(NotFound)
+  ),
+)(RepoList);
 
 
-
-//Find Query User from graphiql (return is nested and would need to alter props above)
-
-// query FindUser($login: String!){
-//   search(query:$login, type:USER, first:1){
-//     edges {
-//       node{
-//       ... on User {
-//         login
-//         repositories(first: 25) {
-//         totalCount
-//         pageInfo{
-//           hasNextPage
-//           hasPreviousPage
-//           startCursor
-//           endCursor
-//         }
-//         nodes {
-//           id
-//           name
-//           createdAt
-//           description
-//           isFork
-//           url
-//           pushedAt
-//           primaryLanguage {
-//             name
-//           }
-//           owner {
-//             login
-//           }
-//           watchers(first:0){
-//             totalCount
-//           }
-//           stargazers(first:0) {
-//             totalCount
-//           }
-//           forks(first:0){
-//             totalCount
-//           }
-//         }
-  
-//       }
-//       }
-//       }
-//     }
-//   }
-// }

@@ -5,29 +5,28 @@ import {withState, withHandlers, withProps} from 'recompose';
 import { Search } from 'semantic-ui-react'
 
 
-const addState = withState('state', 'stateChangeHandler', {} )
+// const addState = withState('state', 'stateChangeHandler', {} )
 
-const addHandlers = withHandlers({
-    handleSearch: ({state, stateChangeHandler}) => (e,data) => 
-        stateChangeHandler({
-            searchString: e.target.value
-        }),
+// const addHandler = withHandlers({
+//     handleResultSelect: (e, d) => { 
+//         console.log(e)
+//         console.log(d)
+//     }
 
-})
+// })
 
-const SearchService = ({loading, users, refetch, variables, handleSearch, state, login }) => {
-console.log(users, state)
-    return(
+const SearchService = ({loading, users, refetch, variables, handleSearch, handleSelect, searchString, state, login }) => (
+
 <Search
     loading={loading}
-    onResultSelect={(e, { result }) =>  {console.log('result selected', result.title ); console.log(e); handleSearch({target: {value: result.title}})}}
-    onSearchChange={x => {handleSearch(x); refetch({login: x.target.value}) }}
+    onResultSelect={(e,{ result }) => handleSelect(result.title)}
+    onSearchChange={handleSearch}
     results={users ? map(x => Object.assign({}, {title: x.login}), users ) : users }
-    value={state.searchString || ''}
+    value={searchString || ''}
   />
-    )
-}
+)
 
 
+ 
 
-export default compose(addState,addHandlers)(SearchService)
+export default SearchService

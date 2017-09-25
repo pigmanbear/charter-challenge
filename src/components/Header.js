@@ -1,7 +1,7 @@
 import React from 'react'
 import {Segment, Container, Header, Icon} from 'semantic-ui-react'
 
-const HeaderComponent = (Component) => props => (
+const HeaderComponent = () => (
   <div> 
     <Segment
         inverted
@@ -34,7 +34,6 @@ const HeaderComponent = (Component) => props => (
             }}/>
         </Container>
     </Segment>
-    <Component {...props }/>
     </div>
 )
 

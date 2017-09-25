@@ -11,14 +11,25 @@ import {
   Icon,
   Divider
 } from 'semantic-ui-react'
-import {pick, path, compose, tap, map} from 'ramda'
+import {pick, path, compose, tap, map, toLower} from 'ramda'
 import {emojify} from 'node-emoji'
 import moment from 'moment'
+import fuzzysearch from 'fuzzysearch'
+import User from './User'
 
+
+const fuzzy = searchString => item => fuzzysearch(toLower(searchString), toLower(item))
 //Styling Layout
 //TODO: Presentational Grid (Table)
 
-const topLevel = ['name', 'createdAt', 'description', 'isFork', 'url', 'pushedAt']
+const topLevel = [
+  'name',
+  'createdAt',
+  'description',
+  'isFork',
+  'url',
+  'pushedAt'
+]
 const nested = ['primaryLanguage', 'stargazers', 'forks', 'owner']
 const allFields = pick(topLevel.concat(nested))
 const topFields = pick(topLevel)
@@ -36,63 +47,85 @@ const repoData = map(compose(x => Object.assign(topFields(x), {
 
 //TODO: Sort by various fields, scaffold in file, get working, then refactor
 
-const RepoList = ({repos}) => {
+const RepoList = ({
+  loading,
+  user,
+  repos,
+  variables,
+  login,
+  refetch,
+  filterString
+}) => {
   console.log(repoData(repos))
   return (
     <div>
-      {repos && repoData(repos).map((repo, index) => (
-        <Grid.Row key={index}>
-          <Item>
-            <Item.Content verticalAlign='middle'>
-              <Item.Header as='a' href={repo.url} style={{
-                fontSize: '2em'
-              }}>
-                {repo.name}
-              </Item.Header>
-              <Item.Meta
-                style={{
-                fontWeight: 100,
-                marginTop: '10px',
-                color: 'hsl(221, 61%, 80%)'
-              }}>
-                Created: {moment(repo.createdAt).format('MMM Do, YYYY')}
-              </Item.Meta>
-              <Item.Description
-                style={{
-                marginTop: '1em',
-                marginBottom: '1em',
-                minWidth: '600px'
-              }}>
-                <p>{emojify(repo.description)}</p>
-                <Statistic size='mini' floated='right'>
-                <Statistic.Value>
-                  <Icon name='star' color='yellow'/> {repo.starGazers}</Statistic.Value>
-                <Statistic.Label>stars</Statistic.Label>
-              </Statistic>
-              <Statistic size='mini' floated='right'>
-                <Statistic.Value>
-                  <Icon name='fork' color='grey'/> {repo.forks}</Statistic.Value>
-                <Statistic.Label>forks</Statistic.Label>
-              </Statistic>
+      <Grid.Row>
+        <Grid.Column width={8}>
+          <User user={user}/>
+        </Grid.Column>
+      </Grid.Row>
+      <Divider section />
+      {repos && repoData(repos)
+        .filter(x => fuzzy(filterString || '')(x.name))
+        .map((repo, index) => (
+          <Grid.Row key={index}>
+            <Item>
+              <Item.Content verticalAlign='middle'>
+                <Item.Header
+                  as='a'
+                  href={repo.url}
+                  style={{
+                  fontSize: '2em'
+                }}>
+                  {repo.name}
+                </Item.Header>
+                <Item.Meta
+                  style={{
+                  fontWeight: 100,
+                  marginTop: '10px',
+                  color: 'hsl(221, 61%, 80%)'
+                }}>
+                  Created: {moment(repo.createdAt).format('MMM Do, YYYY')}
+                </Item.Meta>
+                <Item.Description
+                  style={{
+                  marginTop: '1em',
+                  marginBottom: '1em',
+                  minWidth: '600px'
+                }}>
+                  <p style={{
+                    width: '80%'
+                  }}>{emojify(repo.description)}</p>
+                  <Statistic size='mini' floated='right'>
+                    <Statistic.Value>
+                      <Icon name='star' color='yellow'/> {repo.starGazers}</Statistic.Value>
+                    <Statistic.Label>stars</Statistic.Label>
+                  </Statistic>
+                  <Statistic size='mini' floated='right'>
+                    <Statistic.Value>
+                      <Icon name='fork' color='grey'/> {repo.forks}</Statistic.Value>
+                    <Statistic.Label>forks</Statistic.Label>
+                  </Statistic>
 
-              </Item.Description>
-              <Item.Extra>
-                <Label icon='code' content={repo.language}/>
-                <Label icon='upload' content={`Updated:  ${moment(repo.pushedAt).fromNow()}`}/>
+                </Item.Description>
+                <Item.Extra>
+                  <Label icon='code' content={repo.language}/>
+                  <Label icon='upload' content={`Updated: ${moment(repo.pushedAt).fromNow()}`}/>
 
-              </Item.Extra>
+                </Item.Extra>
 
-            </Item.Content>
-          </Item>
-          <Divider section/>
-        </Grid.Row>
+              </Item.Content>
+            </Item>
+            <Divider section/>
+          </Grid.Row>
 
-      ))}
+        ))}
     </div>
   )
 }
 RepoList.propTypes = {
-  repos: PropTypes.array.isRequired
+  repos: PropTypes.array.isRequired,
+  user: PropTypes.object.isRequired,
 };
 
 export default RepoList;

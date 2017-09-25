@@ -6,6 +6,8 @@ import GitHubRepos from './components/GitHubRepos';
 import logo from './logo.svg';
 import {GraphQLClient} from 'graphql-request'
 import {asyncReactor} from 'async-reactor';
+import Loading from './components/Loading'
+import Body from './components/Body'
 
 const simpleClient = new GraphQLClient('https://api.github.com/graphql', {
   headers: {
@@ -44,15 +46,18 @@ async function creatApolloClient() {
     }
   });
   const client = await new ApolloClient({networkInterface, fragmentMatcher: myFragmentMatcher});
-  return await(
-    <ApolloProvider client={client}>
-      <div>
-        <GitHubRepos/>
-      </div>
-    </ApolloProvider>
-  );
+  return await class App extends Component {
+    render() {
+      return (
+        <ApolloProvider client={client}>
+          <div>
+            <Header/>
+            <Body/>
+          </div>
+        </ApolloProvider>
+      )
+    }
+  }
 }
 
-//TODO ?Add Loading Component for Initialization
-
-export default asyncReactor(creatApolloClient);
+export default asyncReactor(creatApolloClient, Loading);
