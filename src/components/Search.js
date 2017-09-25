@@ -15,12 +15,15 @@ const SearchService = ({
     loading={loading}
     onResultSelect={(e, {result}) => handleSelect(result.title)}
     onSearchChange={handleSearch}
-    results={tap(console.log,users)
+    results={users
     ? map(user => Object.assign({}, {
         title: user.login,
         description: user.bio,
         image: user.avatarUrl,
-        price: user.repositories.totalCount.toString()
+        price: user
+            .repositories
+            .totalCount
+            .toString()
     }), users)
     : users}
     value={searchString || ''}/>)

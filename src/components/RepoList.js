@@ -17,7 +17,16 @@ import {
   compose,
   tap,
   map,
-  toLower
+  toLower,
+  prop,
+  sortBy,
+  sortWith,
+  equals,
+  ascend, 
+  concat,
+  prepend,
+  reverse,
+  filter
 } from 'ramda'
 import {emojify} from 'node-emoji'
 import moment from 'moment'
@@ -26,14 +35,19 @@ import User from './User'
 
 const fuzzy = searchString => item => fuzzysearch(toLower(searchString), toLower(item))
 
-
 const topLevel = [
   'name',
   'createdAt',
+  'pushedAt',
   'description',
-  'isFork',
   'url',
-  'pushedAt'
+  'isFork'
+]
+const secondLevel = [
+  'language',
+  'starGazers',
+  'forks',
+  'owner'
 ]
 const nested = ['primaryLanguage', 'stargazers', 'forks', 'owner']
 const allFields = pick(topLevel.concat(nested))
@@ -50,6 +64,8 @@ const repoData = map(compose(x => Object.assign(topFields(x), {
   owner: owner(x)
 }), allFields))
 
+const sortList = (x) => sortWith(compose(map(ascend),map(prop),prepend(x),filter(y => y !==x))(concat(topLevel, secondLevel)))
+const transformList =(x, y) => compose(d => y ? d : reverse(d),d => x ? sortList(x)(d) : d ,repoData)
 //TODO: Sort by various fields, scaffold in file, get working, then refactor
 
 const RepoList = ({
@@ -57,8 +73,12 @@ const RepoList = ({
   user,
   repos,
   login,
-  filterString
+  filterString,
+  sortString,
+  sortOrder
 }) => {
+  //console.log(sortList(sortString))
+  
   return (
     <div>
       <Grid.Row>
@@ -66,8 +86,8 @@ const RepoList = ({
           <User user={user}/>
         </Grid.Column>
       </Grid.Row>
-      <Divider section/> {repos && repoData(repos)
-        .filter(x => fuzzy(filterString || '')(x.name))
+      <Divider section/> {repos && (transformList(sortString, sortOrder)(repos)).
+        filter(x => fuzzy(filterString || '')(x.name))
         .map((repo, index) => (
           <Grid.Row key={index}>
             <Item>

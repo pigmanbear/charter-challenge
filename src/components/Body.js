@@ -6,7 +6,8 @@ import {
     Grid,
     Button,
     Input,
-    Container
+    Container,
+    Dropdown
 } from 'semantic-ui-react'
 import GithubRepos from './GitHubRepos'
 import User from './User'
@@ -17,26 +18,49 @@ import Filter from './Filter'
 
 const l = tap(console.log)
 
-//Basic Styling Layout and Filter
-//TODO: Refactor to smaller components
+const sortOptions = [
+    {
+        text: 'Language',
+        value: 'language'
+    }, {
+        text: 'Repository',
+        value: 'name'
+    }, {
+        text: 'Forks',
+        value: 'forks'
+    }, {
+        text: 'Stars',
+        value: 'starGazers'
+    }, {
+        text: 'Created',
+        value: 'createdAt'
+    }, {
+        text: 'Updated',
+        value: 'pushedAt'
+    }
 
-// TODO: Clean up withState and login prop (fleshing out some ideas for
-// searching for user)
+]
 
 const enhance = compose(withState('data', 'filterData', {}), withHandlers({
     filterResults: ({data, filterData}) => e => filterData(Object.assign(data, {filterString: e.target.value})),
     handleSearchChange: ({data, filterData}) => e => {
         filterData(Object.assign(data, {searchString: e.target.value}))
     },
-    handleSelection: ({data, filterData}) => selection => {
+    handleSearchSelection: ({data, filterData}) => selection => {
         filterData(Object.assign({}, {
             searchString: selection,
             login: selection
         }))
+    },
+    handleSortSelection: ({data, filterData}) => selection => {
+        filterData(Object.assign(data, {
+            sortBy: selection,
+            sortOrder: selection === data.sortBy ? !data.sortOrder : true
+        }))
     }
 }))
 
-const Body = enhance(({data, filterResults, handleSearchChange, handleSelection}) => {
+const Body = ({data, filterResults, handleSearchChange, handleSearchSelection, handleSortSelection}) => {
     return (
         <Segment style={{
             padding: '4em 0em'
@@ -44,10 +68,17 @@ const Body = enhance(({data, filterResults, handleSearchChange, handleSelection}
             <Container>
                 <Search
                     handleSearch={handleSearchChange}
-                    handleSelect={handleSelection}
+                    handleSelect={handleSearchSelection}
                     searchString={data.searchString}
                     login={data.searchString}/>
                 <Filter onChange={filterResults} data={data.filterString || ''}/>
+                <Dropdown
+                    selection
+                    placeholder='Sort By ...'
+                    options={sortOptions}
+                    icon='sort'
+                    onChange={(e, {value}) => handleSortSelection(value)}
+                    />
                 <Grid
                     container
                     stackable
@@ -55,11 +86,15 @@ const Body = enhance(({data, filterResults, handleSearchChange, handleSelection}
                     style={{
                     marginTop: '1em'
                 }}>
-                    <GithubRepos filterString={data.filterString} login={data.login}/>
+                    <GithubRepos
+                        filterString={data.filterString}
+                        login={data.login}
+                        sortString={data.sortBy}
+                        sortOrder={data.sortOrder}/>
                 </Grid>
             </Container>
         </Segment>
     )
-});
+};
 
-export default Body;
+export default enhance(Body);
