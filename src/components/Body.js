@@ -7,7 +7,8 @@ import {
     Button,
     Input,
     Container,
-    Dropdown
+    Dropdown,
+    Menu
 } from 'semantic-ui-react'
 import GithubRepos from './GitHubRepos'
 import User from './User'
@@ -55,7 +56,9 @@ const enhance = compose(withState('data', 'filterData', {}), withHandlers({
     handleSortSelection: ({data, filterData}) => selection => {
         filterData(Object.assign(data, {
             sortBy: selection,
-            sortOrder: selection === data.sortBy ? !data.sortOrder : true
+            sortOrder: selection === data.sortBy
+                ? !data.sortOrder
+                : true
         }))
     }
 }))
@@ -63,26 +66,48 @@ const enhance = compose(withState('data', 'filterData', {}), withHandlers({
 const Body = ({data, filterResults, handleSearchChange, handleSearchSelection, handleSortSelection}) => {
     return (
         <Segment style={{
-            padding: '4em 0em'
+            padding: '1em 0em'
         }} vertical>
             <Container>
-                <Search
-                    handleSearch={handleSearchChange}
-                    handleSelect={handleSearchSelection}
-                    searchString={data.searchString}
-                    login={data.searchString}/>
-                <Filter onChange={filterResults} data={data.filterString || ''}/>
-                <Dropdown
-                    selection
-                    placeholder='Sort By ...'
-                    options={sortOptions}
-                    icon='sort'
-                    onChange={(e, {value}) => handleSortSelection(value)}
-                    />
+                <Grid container stackable centered verticalAlign='middle' columns={3} divided>
+                    <Grid.Row>
+                        <Grid.Column textAlign='center'>
+                            <Menu fluid vertical inverted>
+                                <Menu.Item className='header'>Github User Search</Menu.Item>
+                            </Menu>
+                            <Search
+                                handleSearch={handleSearchChange}
+                                handleSelect={handleSearchSelection}
+                                searchString={data.searchString}
+                                login={data.searchString}/>
+                        </Grid.Column>
+                        <Grid.Column textAlign='center'>
+                            <Menu fluid vertical inverted>
+                                <Menu.Item className='header'>Filter by Name</Menu.Item>
+                            </Menu>
+                            <Filter onChange={filterResults} data={data.filterString || ''}/>
+                        </Grid.Column>
+                        <Grid.Column textAlign='center'>
+                            <Menu fluid vertical inverted>
+                                <Menu.Item className='header'>Sort by Details</Menu.Item>
+                            </Menu>
+                            <Dropdown
+                                button
+                                floating
+                                className='icon'
+                                labeled
+                                text='Sort'
+                                options={sortOptions}
+                                icon='sort'
+                                onChange={(e, {value}) => handleSortSelection(value)}/>
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
                 <Grid
                     container
                     stackable
                     verticalAlign='middle'
+                    columns={1}
                     style={{
                     marginTop: '1em'
                 }}>

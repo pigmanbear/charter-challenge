@@ -16,17 +16,16 @@ const HeaderComponent = () => (
                     icon='github'
                     as='h1'
                     inverted
-                    content='Github Repo Explorer'
+                    content='Github Repository Explorer'
                     style={{
                     fontSize: '3em',
                     fontWeight: 'normal',
                     marginBottom: 0,
-                    marginTop: '1em',
-                    paddingLeft: '1em'
+                    marginTop: '1em'  
                 }}/>
                 <Header
                     as='h2'
-                    content='Details for Github Repositories'
+                    content='Details for Github Users'
                     inverted
                     style={{
                     fontSize: '1.7em',

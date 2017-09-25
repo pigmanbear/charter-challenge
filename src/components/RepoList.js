@@ -21,8 +21,7 @@ import {
   prop,
   sortBy,
   sortWith,
-  equals,
-  ascend, 
+  ascend,
   concat,
   prepend,
   reverse,
@@ -43,12 +42,7 @@ const topLevel = [
   'url',
   'isFork'
 ]
-const secondLevel = [
-  'language',
-  'starGazers',
-  'forks',
-  'owner'
-]
+const secondLevel = ['language', 'starGazers', 'forks', 'owner']
 const nested = ['primaryLanguage', 'stargazers', 'forks', 'owner']
 const allFields = pick(topLevel.concat(nested))
 const topFields = pick(topLevel)
@@ -57,15 +51,28 @@ const starGazers = path(['stargazers', 'totalCount'])
 const forks = path(['forks', 'totalCount'])
 const owner = path(['owner', 'login'])
 
-const repoData = map(compose(x => Object.assign(topFields(x), {
+const repoData = map(
+compose(x => Object.assign(topFields(x), {
   language: language(x),
   starGazers: starGazers(x),
   forks: forks(x),
   owner: owner(x)
-}), allFields))
+}), allFields)
+)
 
-const sortList = (x) => sortWith(compose(map(ascend),map(prop),prepend(x),filter(y => y !==x))(concat(topLevel, secondLevel)))
-const transformList =(x, y) => compose(d => y ? d : reverse(d),d => x ? sortList(x)(d) : d ,repoData)
+const sortList = (x) => sortWith(
+  compose(
+    map(ascend), 
+    map(prop), 
+    prepend(x), 
+    filter(y => y !== x)
+  )(concat(topLevel, secondLevel))
+)
+const transformList = (x, y) => compose(d => y
+  ? d
+  : reverse(d), d => x
+  ? sortList(x)(d)
+  : d, repoData)
 //TODO: Sort by various fields, scaffold in file, get working, then refactor
 
 const RepoList = ({
@@ -78,18 +85,20 @@ const RepoList = ({
   sortOrder
 }) => {
   //console.log(sortList(sortString))
-  
+
   return (
     <div>
-      <Grid.Row>
-        <Grid.Column width={8}>
+      <Grid.Row> 
+        <Grid.Column stretched>
           <User user={user}/>
         </Grid.Column>
       </Grid.Row>
-      <Divider section/> {repos && (transformList(sortString, sortOrder)(repos)).
-        filter(x => fuzzy(filterString || '')(x.name))
+      <Divider section style={{marginBottom: '1em'}}/> 
+      <Item.Group>
+      {repos && (transformList(sortString, sortOrder)(repos))
+        .filter(x => fuzzy(filterString || '')(x.name))
         .map((repo, index) => (
-          <Grid.Row key={index}>
+          <Grid.Row key={index} >
             <Item>
               <Item.Content verticalAlign='middle'>
                 <Item.Header
@@ -139,8 +148,9 @@ const RepoList = ({
             </Item>
             <Divider section/>
           </Grid.Row>
-
         ))}
+
+    </Item.Group>
     </div>
   )
 }

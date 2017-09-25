@@ -1,4 +1,4 @@
-import {path, compose, tap, isNil} from 'ramda'
+import {path, compose, tap, isNil,pick} from 'ramda'
 import {gql, graphql} from 'react-apollo'
 import {branch, renderComponent, withProps} from 'recompose';
 import Loading from './Loading'
@@ -6,14 +6,20 @@ import Header from './Header'
 import NotFound from './NotFound'
 import RepoList from './RepoList'
 
-// TODO: Review Fragments, gql in another file? Cleanup 'Not Found' Branch Search
-// Query for Name, Possible Pagination for Repos, Watchers, Stargazers etc
+// TODO: Review Fragments, gql in another file? Cleanup 'Not Found' Branch
+// Search Query for Name, Possible Pagination for Repos, Watchers, Stargazers
+// etc
 // TODO: Cleanup with props (considering different methods for searching for
 // user, return first one) https://developer.github.com/v4/
 const GET_GITHUB_REPOS = gql `
   query GetGitHubRepos($login: String!) {
     user(login: $login) {
       login
+      avatarUrl
+      bio
+      followers(first:0){
+        totalCount
+      }
       repositories(first: 25) {
         totalCount
         pageInfo{
@@ -73,10 +79,14 @@ export default compose(graphql(GET_GITHUB_REPOS, {
       repos: path([
         'repositories', 'nodes'
       ], user),
-      user: Object.assign({}, {
-        login: path(['login'], user),
+      user: user && Object.assign(pick([
+        'login', 'avatarUrl', 'bio'
+      ], user), {
         repoCount: path([
           'repositories', 'totalCount'
+        ], user),
+        followers:  path([
+          'followers', 'totalCount'
         ], user)
       }),
       variables: variables,
@@ -84,6 +94,4 @@ export default compose(graphql(GET_GITHUB_REPOS, {
       refetch: refetch
     })
   }
-}), 
-branch(({loading}) => loading, renderComponent(Loading)), 
-branch(({user}) => isNil(user.login), renderComponent(NotFound)))(RepoList);
+}), branch(({loading}) => loading, renderComponent(Loading)), branch(({user}) => isNil(user.login), renderComponent(NotFound)))(RepoList);
