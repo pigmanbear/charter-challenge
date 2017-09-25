@@ -1,8 +1,6 @@
 import {
     path,
     compose,
-    tap,
-    isNil,
     map,
     pick,
     pluck,
@@ -11,7 +9,6 @@ import {
     not
 } from 'ramda'
 import {gql, graphql} from 'react-apollo';
-import {branch, renderComponent, withState, withHandlers, withProps} from 'recompose';
 import Search from './Search'
 
 // TODO: Review Fragments, gql in another file? Cleanup 'Not Found' Branch
@@ -57,16 +54,12 @@ export default compose(graphql(GET_GITHUB_USERS, {
         data: {
             loading,
             search,
-            variables,
-            refetch,
             login
         }
     }) => {
         return ({
             loading,
             users: search && prepareUsers(search),
-            variables,
-            refetch,
             login
         })
     }

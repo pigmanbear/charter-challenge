@@ -2,8 +2,6 @@ import ApolloClient, {createNetworkInterface} from 'apollo-client';
 import React, {Component} from 'react';
 import {ApolloProvider, IntrospectionFragmentMatcher} from 'react-apollo';
 import Header from './components/Header'
-import GitHubRepos from './components/GitHubRepos';
-import logo from './logo.svg';
 import {GraphQLClient} from 'graphql-request'
 import {asyncReactor} from 'async-reactor';
 import Loading from './components/Loading'

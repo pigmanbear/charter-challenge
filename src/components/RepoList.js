@@ -1,10 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {
-  List,
-  Segment,
   Grid,
-  Button,
   Statistic,
   Item,
   Label,
@@ -15,11 +12,9 @@ import {
   pick,
   path,
   compose,
-  tap,
   map,
   toLower,
   prop,
-  sortBy,
   sortWith,
   ascend,
   concat,
@@ -68,12 +63,14 @@ const sortList = (x) => sortWith(
     filter(y => y !== x)
   )(concat(topLevel, secondLevel))
 )
-const transformList = (x, y) => compose(d => y
+const transformList = (sortString, order) => compose(
+  d => order
   ? d
-  : reverse(d), d => x
-  ? sortList(x)(d)
+  : reverse(d), 
+  d => sortString
+  ? sortList(sortString)(d)
   : d, repoData)
-//TODO: Sort by various fields, scaffold in file, get working, then refactor
+
 
 const RepoList = ({
   loading,
@@ -84,7 +81,6 @@ const RepoList = ({
   sortString,
   sortOrder
 }) => {
-  //console.log(sortList(sortString))
 
   return (
     <div>
@@ -156,7 +152,7 @@ const RepoList = ({
 }
 RepoList.propTypes = {
   repos: PropTypes.array.isRequired,
-  user: PropTypes.object.isRequired
+  user: PropTypes.object.isRequired,
 };
 
 export default RepoList;

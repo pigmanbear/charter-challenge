@@ -1,23 +1,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {
-    List,
     Segment,
     Grid,
-    Button,
-    Input,
     Container,
     Dropdown,
     Menu
 } from 'semantic-ui-react'
 import GithubRepos from './GitHubRepos'
-import User from './User'
 import {withHandlers, withState} from 'recompose'
-import {compose, tap, toLower} from 'ramda'
+import {compose} from 'ramda'
 import Search from './SearchGithubUsers'
 import Filter from './Filter'
-
-const l = tap(console.log)
 
 const sortOptions = [
     {
@@ -63,8 +57,7 @@ const enhance = compose(withState('data', 'filterData', {}), withHandlers({
     }
 }))
 
-const Body = ({data, filterResults, handleSearchChange, handleSearchSelection, handleSortSelection}) => {
-    return (
+const Body = ({data, filterResults, handleSearchChange, handleSearchSelection, handleSortSelection}) =>  (
         <Segment style={{
             padding: '1em 0em'
         }} vertical>
@@ -114,12 +107,19 @@ const Body = ({data, filterResults, handleSearchChange, handleSearchSelection, h
                     <GithubRepos
                         filterString={data.filterString}
                         login={data.login}
-                        sortString={data.sortBy}
-                        sortOrder={data.sortOrder}/>
+                        sortString={data.sortBy || ''}
+                        sortOrder={data.sortOrder || false}/>
                 </Grid>
             </Container>
         </Segment>
     )
-};
+
+Body.prototypes = {
+    data: PropTypes.object, 
+    filterResults: PropTypes.func, 
+    handleSearchChange: PropTypes.func,
+    handleSearchSelection: PropTypes.func,
+    handleSortSelection: PropTypes.func
+}
 
 export default enhance(Body);

@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {path, compose, tap, isNil, map} from 'ramda'
-import {withState, withHandlers, withProps} from 'recompose';
+import {map} from 'ramda'
 import {Search} from 'semantic-ui-react'
 
 const SearchService = ({
@@ -28,4 +27,11 @@ const SearchService = ({
     : users}
     value={searchString || ''}/>)
 
+SearchService.propTypes = {
+    users: PropTypes.array,
+    login: PropTypes.string,
+    handleSearch: PropTypes.func.isRequired,
+    handleSelect: PropTypes.func.isRequired,
+    searchString: PropTypes.string
+}
 export default SearchService

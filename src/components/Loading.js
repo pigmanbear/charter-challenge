@@ -1,5 +1,5 @@
 import React from 'react';
-import {Header, Container, Icon} from 'semantic-ui-react'
+import {Container, Icon} from 'semantic-ui-react'
 
 const Loading = () => (
   <Container text textAlign='center' style={{
