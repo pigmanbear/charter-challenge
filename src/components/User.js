@@ -13,17 +13,19 @@ const User = ({user}) => (
             }}>
                 <Item.Header>{user.login}</Item.Header>
                 <Item.Meta>
-                    <Icon name='folder'/> {user
-                        .repoCount
-                        .toString()
-}</Item.Meta>
+                    <Icon name='folder'/> 
+                        {user
+                            .repoCount
+                            .toString()}
+                </Item.Meta>
                 <Item.Description>{user.bio}</Item.Description>
-                <Item.Extra><Icon name='users'/> {user
-                        .followers
-                        .toString()
-}</Item.Extra>
+                <Item.Extra>
+                    <Icon name='users'/> 
+                        {user
+                            .followers
+                            .toString()}
+                </Item.Extra>
             </Item.Content>
-
         </Item>
     </Item.Group>
 )
