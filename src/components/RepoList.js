@@ -11,16 +11,21 @@ import {
   Icon,
   Divider
 } from 'semantic-ui-react'
-import {pick, path, compose, tap, map, toLower} from 'ramda'
+import {
+  pick,
+  path,
+  compose,
+  tap,
+  map,
+  toLower
+} from 'ramda'
 import {emojify} from 'node-emoji'
 import moment from 'moment'
 import fuzzysearch from 'fuzzysearch'
 import User from './User'
 
-
 const fuzzy = searchString => item => fuzzysearch(toLower(searchString), toLower(item))
-//Styling Layout
-//TODO: Presentational Grid (Table)
+
 
 const topLevel = [
   'name',
@@ -51,12 +56,9 @@ const RepoList = ({
   loading,
   user,
   repos,
-  variables,
   login,
-  refetch,
   filterString
 }) => {
-  console.log(repoData(repos))
   return (
     <div>
       <Grid.Row>
@@ -64,8 +66,7 @@ const RepoList = ({
           <User user={user}/>
         </Grid.Column>
       </Grid.Row>
-      <Divider section />
-      {repos && repoData(repos)
+      <Divider section/> {repos && repoData(repos)
         .filter(x => fuzzy(filterString || '')(x.name))
         .map((repo, index) => (
           <Grid.Row key={index}>
@@ -125,7 +126,7 @@ const RepoList = ({
 }
 RepoList.propTypes = {
   repos: PropTypes.array.isRequired,
-  user: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired
 };
 
 export default RepoList;

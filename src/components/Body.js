@@ -20,20 +20,23 @@ const l = tap(console.log)
 //Basic Styling Layout and Filter
 //TODO: Refactor to smaller components
 
-// TODO: Clean up withState and login prop (fleshing out some ideas for searching
-// for user)
+// TODO: Clean up withState and login prop (fleshing out some ideas for
+// searching for user)
 
 const enhance = compose(withState('data', 'filterData', {}), withHandlers({
     filterResults: ({data, filterData}) => e => filterData(Object.assign(data, {filterString: e.target.value})),
     handleSearchChange: ({data, filterData}) => e => {
         filterData(Object.assign(data, {searchString: e.target.value}))
     },
-    handleSelection: ({data, filterData})  => selection => {
-        filterData(Object.assign({}, {searchString: selection, login: selection}))
+    handleSelection: ({data, filterData}) => selection => {
+        filterData(Object.assign({}, {
+            searchString: selection,
+            login: selection
+        }))
     }
 }))
 
-const Body = enhance(({data, filterResults, handleSearchChange, handleSelection }) => {
+const Body = enhance(({data, filterResults, handleSearchChange, handleSelection}) => {
     return (
         <Segment style={{
             padding: '4em 0em'

@@ -27,8 +27,8 @@ const query = `{
 }`
 
 // http://dev.apollodata.com/react/initialization.html#fragment-matcher Creating
-// Async Function to Automatically Retrieve Schema As Per docs, in build
-// process would make more sense for production
+// Async Function to Automatically Retrieve Schema As Per docs, in build process
+// would make more sense for production
 
 async function creatApolloClient() {
   let schema = await simpleClient
