@@ -1,15 +1,21 @@
-import {path, compose,isNil,pick} from 'ramda'
+import {
+  path,
+  compose,
+  isNil,
+  pick,
+  set,
+  lensPath
+} from 'ramda'
 import {gql, graphql} from 'react-apollo'
 import {branch, renderComponent} from 'recompose';
 import Loading from './Loading'
 import NotFound from './NotFound'
 import RepoList from './RepoList'
 
-// TODO: Possible Pagination?
-// https://developer.github.com/v4/
+// TODO: Possible Pagination? https://developer.github.com/v4/
 
 const GET_GITHUB_REPOS = gql `
-  query GetGitHubRepos($login: String!) {
+  query GetGitHubRepos($login: String!, $cursor: String) {
     user(login: $login) {
       login
       avatarUrl
@@ -17,7 +23,7 @@ const GET_GITHUB_REPOS = gql `
       followers(first:0){
         totalCount
       }
-      repositories(first: 25) {
+      repositories(first: 25, after:$cursor) {
         totalCount
         pageInfo{
           hasNextPage
@@ -66,9 +72,11 @@ export default compose(graphql(GET_GITHUB_REPOS, {
     data: {
       loading,
       user,
-      login
+      login,
+      fetchMore
     }
   }) => {
+    console.log(user)
     return ({
       loading,
       repos: path([
@@ -80,11 +88,31 @@ export default compose(graphql(GET_GITHUB_REPOS, {
         repoCount: path([
           'repositories', 'totalCount'
         ], user),
-        followers:  path([
+        followers: path([
           'followers', 'totalCount'
         ], user)
       }),
       login: login,
+      pageInfo: path([
+        'repositories', 'pageInfo'
+      ], user),
+      loadMoreRepos: () => {
+        return fetchMore({
+          query: GET_GITHUB_REPOS,
+          variables: {
+            login: user.login,
+            cursor: user.repositories.pageInfo.endCursor
+          },
+          updateQuery: (prev, {fetchMoreResult}) => {
+            console.log('Prev', prev.user.repositories.nodes.concat(fetchMoreResult.user.repositories.nodes))
+            const result = set(lensPath(['user', 'repositories', 'nodes']), prev.user.repositories.nodes.concat(fetchMoreResult.user.repositories.nodes), fetchMoreResult)
+            console.log(result)
+            return {
+              ...result
+            }
+          }
+        })
+      }
     })
   }
-}), branch(({loading}) => loading, renderComponent(Loading)), branch(({user}) => isNil(user.login), renderComponent(NotFound)))(RepoList);
+}), branch(({loading}) => loading, renderComponent(Loading)), branch(({user}) => user && isNil(user.login), renderComponent(NotFound)))(RepoList);

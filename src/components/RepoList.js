@@ -6,7 +6,8 @@ import {
   Item,
   Label,
   Icon,
-  Divider
+  Divider,
+  Button
 } from 'semantic-ui-react'
 import {
   pick,
@@ -46,31 +47,36 @@ const starGazers = path(['stargazers', 'totalCount'])
 const forks = path(['forks', 'totalCount'])
 const owner = path(['owner', 'login'])
 
-const repoData = map(
-compose(x => Object.assign(topFields(x), {
+const repoData = map(compose(x => Object.assign(topFields(x), {
   language: language(x),
   starGazers: starGazers(x),
   forks: forks(x),
   owner: owner(x)
-}), allFields)
-)
+}), allFields))
 
-const sortList = (x) => sortWith(
-  compose(
-    map(ascend), 
-    map(prop), 
-    prepend(x), 
-    filter(y => y !== x)
-  )(concat(topLevel, secondLevel))
-)
-const transformList = (sortString, order) => compose(
-  d => order
+const sortList = (x) => sortWith(compose(map(ascend), map(prop), prepend(x), filter(y => y !== x))(concat(topLevel, secondLevel)))
+const transformList = (sortString, order) => compose(d => order
   ? d
-  : reverse(d), 
-  d => sortString
+  : reverse(d), d => sortString
   ? sortList(sortString)(d)
   : d, repoData)
 
+const ButtonExampleButton = ({loadMore, noMore, total}) => (
+  <Button
+    content={noMore
+    ? 'All Loaded'
+    : 'Load More Results'}
+    icon='folder'
+    label={{
+    as: 'a',
+    basic: true,
+    content: total
+  }}
+    labelPosition='right'
+    onClick={loadMore}
+    disabled={noMore}
+    />
+)
 
 const RepoList = ({
   loading,
@@ -79,74 +85,83 @@ const RepoList = ({
   login,
   filterString,
   sortString,
-  sortOrder
+  sortOrder,
+  pageInfo,
+  loadMoreRepos
 }) => {
-
+  console.log(repos.length, user.repoCount)
   return (
+
     <div>
-      <Grid.Row> 
+      <Grid.Row>
         <Grid.Column stretched>
           <User user={user}/>
         </Grid.Column>
       </Grid.Row>
-      <Divider section style={{marginBottom: '1em'}}/> 
+      <Divider section style={{
+        marginBottom: '1em'
+      }}/>
+      <ButtonExampleButton
+        loadMore={loadMoreRepos}
+        noMore={repos.length === user.repoCount}
+        total={repos.length}/>
       <Item.Group>
-      {repos && (transformList(sortString, sortOrder)(repos))
-        .filter(x => fuzzy(filterString || '')(x.name))
-        .map((repo, index) => (
-          <Grid.Row key={index} >
-            <Item>
-              <Item.Content verticalAlign='middle'>
-                <Item.Header
-                  as='a'
-                  href={repo.url}
-                  style={{
-                  fontSize: '2em'
-                }}>
-                  {repo.name}
-                </Item.Header>
-                <Item.Meta
-                  style={{
-                  fontWeight: 100,
-                  marginTop: '10px',
-                  color: 'hsl(221, 61%, 80%)'
-                }}>
-                  Created: {moment(repo.createdAt).format('MMM Do, YYYY')}
-                </Item.Meta>
-                <Item.Description
-                  style={{
-                  marginTop: '1em',
-                  marginBottom: '1em',
-                  minWidth: '600px'
-                }}>
-                  <p style={{
-                    width: '80%'
-                  }}>{emojify(repo.description)}</p>
-                  <Statistic size='mini' floated='right'>
-                    <Statistic.Value>
-                      <Icon name='star' color='yellow'/> {repo.starGazers}</Statistic.Value>
-                    <Statistic.Label>stars</Statistic.Label>
-                  </Statistic>
-                  <Statistic size='mini' floated='right'>
-                    <Statistic.Value>
-                      <Icon name='fork' color='grey'/> {repo.forks}</Statistic.Value>
-                    <Statistic.Label>forks</Statistic.Label>
-                  </Statistic>
+        {repos && (transformList(sortString, sortOrder)(repos))
+          .filter(x => fuzzy(filterString || '')(x.name))
+          .map((repo, index) => (
+            <Grid.Row key={index}>
+              <Item>
+                <Item.Content verticalAlign='middle'>
+                  <Item.Header
+                    as='a'
+                    href={repo.url}
+                    style={{
+                    fontSize: '2em'
+                  }}>
+                    {repo.name}
+                  </Item.Header>
+                  <Item.Meta
+                    style={{
+                    fontWeight: 100,
+                    marginTop: '10px',
+                    color: 'hsl(221, 61%, 80%)'
+                  }}>
+                    Created: {moment(repo.createdAt).format('MMM Do, YYYY')}
+                  </Item.Meta>
+                  <Item.Description
+                    style={{
+                    marginTop: '1em',
+                    marginBottom: '1em',
+                    minWidth: '600px'
+                  }}>
+                    <p style={{
+                      width: '80%'
+                    }}>{emojify(repo.description)}</p>
+                    <Statistic size='mini' floated='right'>
+                      <Statistic.Value>
+                        <Icon name='star' color='yellow'/> {repo.starGazers}</Statistic.Value>
+                      <Statistic.Label>stars</Statistic.Label>
+                    </Statistic>
+                    <Statistic size='mini' floated='right'>
+                      <Statistic.Value>
+                        <Icon name='fork' color='grey'/> {repo.forks}</Statistic.Value>
+                      <Statistic.Label>forks</Statistic.Label>
+                    </Statistic>
 
-                </Item.Description>
-                <Item.Extra>
-                  <Label icon='code' content={repo.language}/>
-                  <Label icon='upload' content={`Updated: ${moment(repo.pushedAt).fromNow()}`}/>
+                  </Item.Description>
+                  <Item.Extra>
+                    <Label icon='code' content={repo.language}/>
+                    <Label icon='upload' content={`Updated: ${moment(repo.pushedAt).fromNow()}`}/>
 
-                </Item.Extra>
+                  </Item.Extra>
 
-              </Item.Content>
-            </Item>
-            <Divider section/>
-          </Grid.Row>
-        ))}
+                </Item.Content>
+              </Item>
+              <Divider section/>
+            </Grid.Row>
+          ))}
 
-    </Item.Group>
+      </Item.Group>
     </div>
   )
 }
