@@ -32,6 +32,6 @@ SearchService.propTypes = {
     login: PropTypes.string,
     handleSearch: PropTypes.func.isRequired,
     handleSelect: PropTypes.func.isRequired,
-    searchString: PropTypes.string
+    searchString: PropTypes.string,
 }
 export default SearchService

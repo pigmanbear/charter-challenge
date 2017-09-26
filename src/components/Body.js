@@ -78,7 +78,7 @@ const Body = ({data, filterResults, handleSearchChange, handleSearchSelection, h
                             <Menu fluid vertical inverted>
                                 <Menu.Item className='header'>Filter by Name</Menu.Item>
                             </Menu>
-                            <Filter onChange={filterResults} data={data.filterString || ''}/>
+                            <Filter onChange={filterResults} filterString={data.filterString || ''}/>
                         </Grid.Column>
                         <Grid.Column textAlign='center'>
                             <Menu fluid vertical inverted>
@@ -114,12 +114,13 @@ const Body = ({data, filterResults, handleSearchChange, handleSearchSelection, h
         </Segment>
     )
 
-Body.prototypes = {
+Body.proptypes = {
     data: PropTypes.object, 
     filterResults: PropTypes.func, 
     handleSearchChange: PropTypes.func,
     handleSearchSelection: PropTypes.func,
     handleSortSelection: PropTypes.func
+
 }
 
 export default enhance(Body);

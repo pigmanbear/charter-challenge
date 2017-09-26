@@ -153,6 +153,10 @@ const RepoList = ({
 RepoList.propTypes = {
   repos: PropTypes.array.isRequired,
   user: PropTypes.object.isRequired,
+  sortOrder: PropTypes.bool,
+  filterString: PropTypes.string,
+  sortString: PropTypes.string,
+  login: PropTypes.string
 };
 
 export default RepoList;
