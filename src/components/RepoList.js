@@ -89,7 +89,6 @@ const RepoList = ({
   pageInfo,
   loadMoreRepos
 }) => {
-  console.log(repos.length, user.repoCount)
   return (
 
     <div>

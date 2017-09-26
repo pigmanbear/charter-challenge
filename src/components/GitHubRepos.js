@@ -76,7 +76,6 @@ export default compose(graphql(GET_GITHUB_REPOS, {
       fetchMore
     }
   }) => {
-    console.log(user)
     return ({
       loading,
       repos: path([
@@ -103,14 +102,10 @@ export default compose(graphql(GET_GITHUB_REPOS, {
             login: user.login,
             cursor: user.repositories.pageInfo.endCursor
           },
-          updateQuery: (prev, {fetchMoreResult}) => {
-            console.log('Prev', prev.user.repositories.nodes.concat(fetchMoreResult.user.repositories.nodes))
-            const result = set(lensPath(['user', 'repositories', 'nodes']), prev.user.repositories.nodes.concat(fetchMoreResult.user.repositories.nodes), fetchMoreResult)
-            console.log(result)
-            return {
-              ...result
-            }
-          }
+          updateQuery: (prev, {fetchMoreResult}) => ({
+            ...set(lensPath(['user', 'repositories', 'nodes']), prev.user.repositories.nodes.concat(fetchMoreResult.user.repositories.nodes), fetchMoreResult)
+          })
+
         })
       }
     })
